@@ -7,7 +7,8 @@ time_0 = running_time()
 timer_length = 5 # in minutes
 max_brightness = 6
 running = 0
-ms_in_minute = 1000 # ms in a minute
+ms_in_minute = 1000 # ms in a minute for debugging
+ms_in_minute = 60000
 blank_image = Image(
         "00000:"
         "00000:"

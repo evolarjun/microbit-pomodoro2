@@ -4,7 +4,7 @@ import audio
 
 # set some global variables
 time_0 = running_time()
-timer_length = 5 # in minutes
+timer_length = 25 # in minutes
 max_brightness = 6
 running = 0
 ms_in_minute = 1000 # ms in a minute for debugging
@@ -16,6 +16,13 @@ blank_image = Image(
         "00000:"
         "00000:"
     )
+full_image = Image(
+        "99999:"
+        "99999:"
+        "99999:"
+        "99999:"
+        "99999:"
+)
 
 def updateTimerDisplay(t):
     global max_brightness
@@ -41,11 +48,25 @@ def beep():
         freq_start=500, 
         freq_end=2500, 
         duration=500, 
-        vol_start=200, 
+        vol_start=220, 
         vol_end=0,
         waveform=3,
         fx=0,
         shape=18), wait=False)
+
+def alert():
+    beep()
+    display.show(blank_image)
+    display.show(Image.ALL_CLOCKS)
+    display.show(Image.CLOCK12)
+    sleep(1000)
+    for _ in range(5):
+        display.show(full_image)
+        sleep(300)
+        display.show(blank_image)
+        sleep(100)
+
+
 
 set_volume(50)
 display.show(Image.YES)
@@ -57,10 +78,7 @@ while True:
         elapsed = (running_time() - time_0) / ms_in_minute
         if timer_length - elapsed <= 0:
             running = 0
-            beep()
-            display.show(Image.ALL_CLOCKS)
-            display.show(Image.CLOCK12)
-            sleep(1000)
+            alert()
             showTimerLengthSetting()
         else:
             updateTimerDisplay(timer_length - elapsed)

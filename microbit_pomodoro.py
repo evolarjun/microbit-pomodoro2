@@ -56,16 +56,16 @@ def beep():
 
 def alert():
     beep()
-    display.show(blank_image)
-    display.show(Image.ALL_CLOCKS)
-    display.show(Image.CLOCK12)
-    sleep(1000)
-    for _ in range(5):
+    # display.show(blank_image)
+    for _ in range(8):
         display.show(full_image)
         sleep(300)
         display.show(blank_image)
-        sleep(100)
-
+        sleep(200)
+    display.show(Image.ALL_CLOCKS)
+    display.show(Image.CLOCK12)
+    sleep(1000)
+    
 
 
 set_volume(50)
@@ -97,7 +97,7 @@ while True:
         if running:
             running = 0
             updateTimerDisplay(25)
-            sleep(100)
+            sleep(500)
             showTimerLengthSetting()
         else:
             # toggle timer
@@ -109,3 +109,14 @@ while True:
                 timer_length = 25
                 display.scroll(timer_length)
                 showTimerLengthSetting()
+    if pin_logo.is_touched():
+        if running:
+            running = 0
+            updateTimerDisplay(15)
+            sleep(600)
+            showTimerLengthSetting()
+        else:
+            # Set timer to 15 minutes
+            timer_length = 15
+            display.scroll(timer_length)
+            showTimerLengthSetting()

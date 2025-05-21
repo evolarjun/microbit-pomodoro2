@@ -9,7 +9,7 @@ timer_length_list = [5, 15, 25, 50]
 max_brightness = 6
 running = 0
 ms_in_minute = 1000 # ms in a minute for debugging
-#ms_in_minute = 60000
+ms_in_minute = 60000
 blank_image = Image(
         "00000:"
         "00000:"
@@ -90,6 +90,14 @@ def stop_timer():
     # reset display
     showTimerLengthSetting()
 
+def start_timer():
+    global running
+    global time_0
+    running = 1
+    time_0 = running_time()
+    display.scroll(timer_length)
+
+
 set_volume(50)
 display.show(Image.YES)
 sleep(200)
@@ -107,14 +115,9 @@ while True:
 
     if button_b.was_pressed():
         if running:
-            running = 0
-            # reset display
-            showTimerLengthSetting()
+            stop_timer()
         else:
-            running = 1
-            time_0 = running_time()
-            display.scroll(timer_length)
-
+            start_timer()
     if button_a.was_pressed():
         if running:
             running = 0
@@ -150,24 +153,24 @@ while True:
                 timer_length=25
             display.scroll(timer_length)
             showTimerLengthSetting()
+    
     if pin0.is_touched():
         if running:
             stop_timer()
         else:
             timer_length = 5
-            display.scroll(timer_length)
-            showTimerLengthSetting()
+            start_timer()
+            
     if pin1.is_touched():
         if running:
             stop_timer()
         else:
             timer_length = 15
-            display.scroll(timer_length)
-            showTimerLengthSetting()
+            start_timer()
+    
     if pin2.is_touched():
         if running:
             stop_timer()
         else:
             timer_length = 25
-            display.scroll(timer_length)
-            showTimerLengthSetting()
+            start_timer()

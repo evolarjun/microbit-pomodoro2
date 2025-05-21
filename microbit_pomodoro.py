@@ -5,6 +5,7 @@ import audio
 # set some global variables
 time_0 = running_time()
 timer_length = 25 # in minutes
+timer_length_list = [5, 15, 25, 50]
 max_brightness = 6
 running = 0
 ms_in_minute = 1000 # ms in a minute for debugging
@@ -27,11 +28,15 @@ full_image = Image(
 def updateTimerDisplay(t):
     global max_brightness
     t2 = t
+    if t2 > 25:
+        multiplier = 2
+    else:
+        multiplier = 1
     for row in range(5):
         for col in range(5):
             if  t2 > 0:
                 display.set_pixel(col, row, max_brightness)
-                t2 += -1                    
+                t2 += -multiplier                    
             else:
                 display.set_pixel(col, row, 0)
 
@@ -39,8 +44,17 @@ def showTimerLengthSetting():
     global max_brightness
     global timer_length
     display.show(blank_image)
-    for col in range(int(timer_length / 5)):
-        display.set_pixel(col, 2, max_brightness)
+    left = timer_length
+    for row in range(2, 4):
+        for col in range(5):
+            if left > 0:
+                #print(row, col)
+                display.set_pixel(col, row, max_brightness)
+                left -= 5
+            else:
+                break
+#    for col in range(int(timer_length / 5)):
+#        display.set_pixel(col, 2, max_brightness)
     
 
 def beep():
@@ -116,7 +130,15 @@ while True:
             sleep(600)
             showTimerLengthSetting()
         else:
-            # Set timer to 15 minutes
-            timer_length = 15
+            for i in range(len(timer_length_list)):
+                if timer_length == timer_length_list[i]:
+                    if i == len(timer_length_list) - 1:
+                        timer_length = timer_length_list[0]
+                        break
+                    else:
+                        timer_length = timer_length_list[i + 1]
+                        break
+            else:
+                timer_length=25
             display.scroll(timer_length)
             showTimerLengthSetting()

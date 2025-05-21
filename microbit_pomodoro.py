@@ -9,7 +9,7 @@ timer_length_list = [5, 15, 25, 50]
 max_brightness = 6
 running = 0
 ms_in_minute = 1000 # ms in a minute for debugging
-ms_in_minute = 60000
+#ms_in_minute = 60000
 blank_image = Image(
         "00000:"
         "00000:"
@@ -24,6 +24,10 @@ full_image = Image(
         "99999:"
         "99999:"
 )
+
+pin0.set_touch_mode(pin0.CAPACITIVE)
+pin1.set_touch_mode(pin1.CAPACITIVE)
+pin2.set_touch_mode(pin2.CAPACITIVE)
 
 def updateTimerDisplay(t):
     global max_brightness
@@ -80,11 +84,15 @@ def alert():
     display.show(Image.CLOCK12)
     sleep(1000)
     
-
+def stop_timer():
+    global running
+    running = 0
+    # reset display
+    showTimerLengthSetting()
 
 set_volume(50)
 display.show(Image.YES)
-sleep(100)
+sleep(200)
 showTimerLengthSetting()
 
 while True:
@@ -140,5 +148,26 @@ while True:
                         break
             else:
                 timer_length=25
+            display.scroll(timer_length)
+            showTimerLengthSetting()
+    if pin0.is_touched():
+        if running:
+            stop_timer()
+        else:
+            timer_length = 5
+            display.scroll(timer_length)
+            showTimerLengthSetting()
+    if pin1.is_touched():
+        if running:
+            stop_timer()
+        else:
+            timer_length = 15
+            display.scroll(timer_length)
+            showTimerLengthSetting()
+    if pin2.is_touched():
+        if running:
+            stop_timer()
+        else:
+            timer_length = 25
             display.scroll(timer_length)
             showTimerLengthSetting()

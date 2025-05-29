@@ -8,7 +8,7 @@ timer_length = 25 # in minutes
 max_brightness = 6
 running = 0
 ms_in_minute = 1000 # ms in a minute for debugging
-# ms_in_minute = 60000
+ms_in_minute = 60000
 blank_image = Image(
         "00000:"
         "00000:"
@@ -26,12 +26,14 @@ full_image = Image(
 
 def updateTimerDisplay(t):
     global max_brightness
-    t2 = t
+    t2 = int(t)
     first = max_brightness
-    if t2 > 25:
-        t2 = t / 2
+    if t2 > 26:
+        t2 = t - 25
         first = 0
-    print()
+    #elif t2 == 25:
+    #    first = 3
+    #print()
     for row in range(5):
         for col in range(5):
             #print(str(int(t)) + "  " + str(col) + " " + str(row) + " " + str(t2))
@@ -43,10 +45,6 @@ def updateTimerDisplay(t):
                     display.set_pixel(col, row, max_brightness)
             else:
                 display.set_pixel(col, row, 0)
-#            if (t2 > 0 and not (col == 0 and row == 0)):
-#                display.set_pixel(col, row, max_brightness)
-#            else:
-#                display.set_pixel(col, row, 0)
             t2 += -1
 
 
@@ -56,24 +54,24 @@ def showTimerLengthSetting():
     display.show(blank_image)
     if timer_length > 25:
         display.show(Image.CLOCK12)
-    else: 
+    else:
         for col in range(int(timer_length / 5)):
             display.set_pixel(col, 2, max_brightness)
-    
+
 
 def beep():
     audio.play(audio.SoundEffect(
-        freq_start=2500, 
-        freq_end=1000, 
-        duration=300, 
-        vol_start=20, 
+        freq_start=2500,
+        freq_end=1000,
+        duration=300,
+        vol_start=20,
         vol_end=255,
         waveform=2,
         fx=0,
         shape=18), wait=False)
 
 def alert():
-    
+
     display.show(blank_image)
     #display.show(Image.ALL_CLOCKS)
     #display.show(Image.CLOCK12)
@@ -128,7 +126,7 @@ while True:
                 timer_length = 25
                 display.scroll(timer_length)
                 showTimerLengthSetting()
-            else: 
+            else:
                 timer_length = 50
                 display.scroll(timer_length)
                 showTimerLengthSetting()

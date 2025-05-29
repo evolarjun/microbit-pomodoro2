@@ -8,7 +8,7 @@ timer_length = 25 # in minutes
 max_brightness = 6
 running = 0
 ms_in_minute = 1000 # ms in a minute for debugging
-ms_in_minute = 60000
+# ms_in_minute = 60000
 blank_image = Image(
         "00000:"
         "00000:"
@@ -27,40 +27,59 @@ full_image = Image(
 def updateTimerDisplay(t):
     global max_brightness
     t2 = t
+    first = max_brightness
+    if t2 > 25:
+        t2 = t / 2
+        first = 0
+    print()
     for row in range(5):
         for col in range(5):
-            if  t2 > 0:
-                display.set_pixel(col, row, max_brightness)
-                t2 += -1                    
+            #print(str(int(t)) + "  " + str(col) + " " + str(row) + " " + str(t2))
+            #sleep(100)
+            if (t2 > 0):
+                if (col == 0 and row == 0):
+                    display.set_pixel(col, row, first)
+                else:
+                    display.set_pixel(col, row, max_brightness)
             else:
                 display.set_pixel(col, row, 0)
+#            if (t2 > 0 and not (col == 0 and row == 0)):
+#                display.set_pixel(col, row, max_brightness)
+#            else:
+#                display.set_pixel(col, row, 0)
+            t2 += -1
+
 
 def showTimerLengthSetting():
     global max_brightness
     global timer_length
     display.show(blank_image)
-    for col in range(int(timer_length / 5)):
-        display.set_pixel(col, 2, max_brightness)
+    if timer_length > 25:
+        display.show(Image.CLOCK12)
+    else: 
+        for col in range(int(timer_length / 5)):
+            display.set_pixel(col, 2, max_brightness)
     
 
 def beep():
     audio.play(audio.SoundEffect(
-        freq_start=500, 
-        freq_end=2500, 
-        duration=500, 
-        vol_start=220, 
-        vol_end=0,
-        waveform=3,
+        freq_start=2500, 
+        freq_end=1000, 
+        duration=300, 
+        vol_start=20, 
+        vol_end=255,
+        waveform=2,
         fx=0,
         shape=18), wait=False)
 
 def alert():
-    beep()
+    
     display.show(blank_image)
-    display.show(Image.ALL_CLOCKS)
-    display.show(Image.CLOCK12)
-    sleep(1000)
-    for _ in range(5):
+    #display.show(Image.ALL_CLOCKS)
+    #display.show(Image.CLOCK12)
+    #sleep(1000)
+    beep()
+    for _ in range(6):
         display.show(full_image)
         sleep(300)
         display.show(blank_image)
@@ -101,11 +120,18 @@ while True:
             showTimerLengthSetting()
         else:
             # toggle timer
-            if timer_length == 25:
+            if timer_length == 50:
                 timer_length = 5
                 display.scroll(timer_length)
                 showTimerLengthSetting()
-            else:
+            elif timer_length == 5:
                 timer_length = 25
                 display.scroll(timer_length)
                 showTimerLengthSetting()
+            else: 
+                timer_length = 50
+                display.scroll(timer_length)
+                showTimerLengthSetting()
+    if pin_logo.is_touched():
+        beep()
+        sleep(500)

@@ -63,11 +63,11 @@ def showTimerLengthSetting():
 
 def beep():
     audio.play(audio.SoundEffect(
-        freq_start=500, 
+        freq_start=2200, 
         freq_end=2500, 
-        duration=500, 
+        duration=100, 
         vol_start=220, 
-        vol_end=0,
+        vol_end=220,
         waveform=3,
         fx=0,
         shape=18), wait=False)

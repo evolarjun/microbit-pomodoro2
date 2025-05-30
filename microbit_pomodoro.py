@@ -7,6 +7,7 @@ ms_in_minute = 1000 # ms in a minute for debugging
 ms_in_minute = 60000
 time_0 = running_time()
 timer_length = 25 # in minutes
+timer_length_list = [5, 15, 25, 50]
 max_brightness = 6
 running = 0
 blank_image = Image(
@@ -23,6 +24,10 @@ full_image = Image(
         "99999:"
         "99999:"
 )
+
+pin0.set_touch_mode(pin0.CAPACITIVE)
+pin1.set_touch_mode(pin1.CAPACITIVE)
+pin2.set_touch_mode(pin2.CAPACITIVE)
 
 def updateTimerDisplay(t):
     global max_brightness
@@ -43,6 +48,7 @@ def updateTimerDisplay(t):
                     display.set_pixel(col, row, first)
                 else:
                     display.set_pixel(col, row, max_brightness)
+
             else:
                 display.set_pixel(col, row, 0)
             t2 += -1
@@ -71,7 +77,6 @@ def beep():
         shape=18), wait=False)
 
 def alert():
-
     display.show(blank_image)
     #display.show(Image.ALL_CLOCKS)
     #display.show(Image.CLOCK12)
@@ -81,13 +86,28 @@ def alert():
         display.show(full_image)
         sleep(300)
         display.show(blank_image)
-        sleep(100)
+        sleep(200)
+    display.show(Image.ALL_CLOCKS)
+    display.show(Image.CLOCK12)
+    sleep(1000)
+    
+def stop_timer():
+    global running
+    running = 0
+    # reset display
+    showTimerLengthSetting()
 
+def start_timer():
+    global running
+    global time_0
+    running = 1
+    time_0 = running_time()
+    display.scroll(timer_length)
 
 
 set_volume(50)
 display.show(Image.YES)
-sleep(100)
+sleep(200)
 showTimerLengthSetting()
 
 while True:
@@ -102,19 +122,14 @@ while True:
 
     if button_b.was_pressed():
         if running:
-            running = 0
-            # reset display
-            showTimerLengthSetting()
+            stop_timer()
         else:
-            running = 1
-            time_0 = running_time()
-            display.scroll(timer_length)
-
+            start_timer()
     if button_a.was_pressed():
         if running:
             running = 0
             updateTimerDisplay(25)
-            sleep(100)
+            sleep(500)
             showTimerLengthSetting()
         else:
             # toggle timer
@@ -133,3 +148,4 @@ while True:
     if pin_logo.is_touched():
         beep()
         sleep(500)
+

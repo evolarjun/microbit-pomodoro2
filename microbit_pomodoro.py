@@ -3,12 +3,12 @@ import micropython
 import audio
 
 # set some global variables
+ms_in_minute = 1000 # ms in a minute for debugging
+ms_in_minute = 60000
 time_0 = running_time()
 timer_length = 25 # in minutes
 max_brightness = 6
 running = 0
-ms_in_minute = 1000 # ms in a minute for debugging
-ms_in_minute = 60000
 blank_image = Image(
         "00000:"
         "00000:"
@@ -38,7 +38,7 @@ def updateTimerDisplay(t):
         for col in range(5):
             #print(str(int(t)) + "  " + str(col) + " " + str(row) + " " + str(t2))
             #sleep(100)
-            if (t2 > 0):
+            if (t2 >= 0):
                 if (col == 0 and row == 0):
                     display.set_pixel(col, row, first)
                 else:

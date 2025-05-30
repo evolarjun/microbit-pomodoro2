@@ -3,13 +3,13 @@ import micropython
 import audio
 
 # set some global variables
+ms_in_minute = 1000 # ms in a minute for debugging
+ms_in_minute = 60000
 time_0 = running_time()
 timer_length = 25 # in minutes
 timer_length_list = [5, 15, 25, 50]
 max_brightness = 6
 running = 0
-ms_in_minute = 1000 # ms in a minute for debugging
-ms_in_minute = 60000
 blank_image = Image(
         "00000:"
         "00000:"
@@ -25,41 +25,41 @@ full_image = Image(
         "99999:"
 )
 
-pin0.set_touch_mode(pin0.CAPACITIVE)
-pin1.set_touch_mode(pin1.CAPACITIVE)
-pin2.set_touch_mode(pin2.CAPACITIVE)
-
 def updateTimerDisplay(t):
     global max_brightness
-    t2 = t
-    if t2 > 25:
-        multiplier = 2
-    else:
-        multiplier = 1
+    t2 = int(t)
+    first = max_brightness
+    if t2 > 26:
+        t2 = t - 25
+        first = 0
+    #elif t2 == 25:
+    #    first = 3
+    #print()
     for row in range(5):
         for col in range(5):
-            if  t2 > 0:
-                display.set_pixel(col, row, max_brightness)
-                t2 += -multiplier                    
+            #print(str(int(t)) + "  " + str(col) + " " + str(row) + " " + str(t2))
+            #sleep(100)
+            if (t2 >= 0):
+                if (col == 0 and row == 0):
+                    display.set_pixel(col, row, first)
+                else:
+                    display.set_pixel(col, row, max_brightness)
+
             else:
                 display.set_pixel(col, row, 0)
+            t2 += -1
+
 
 def showTimerLengthSetting():
     global max_brightness
     global timer_length
     display.show(blank_image)
-    left = timer_length
-    for row in range(2, 4):
-        for col in range(5):
-            if left > 0:
-                #print(row, col)
-                display.set_pixel(col, row, max_brightness)
-                left -= 5
-            else:
-                break
-#    for col in range(int(timer_length / 5)):
-#        display.set_pixel(col, 2, max_brightness)
-    
+    if timer_length > 25:
+        display.show(Image.CLOCK12)
+    else:
+        for col in range(int(timer_length / 5)):
+            display.set_pixel(col, 2, max_brightness)
+
 
 def beep():
     audio.play(audio.SoundEffect(
@@ -73,9 +73,12 @@ def beep():
         shape=18), wait=False)
 
 def alert():
+    display.show(blank_image)
+    #display.show(Image.ALL_CLOCKS)
+    #display.show(Image.CLOCK12)
+    #sleep(1000)
     beep()
-    # display.show(blank_image)
-    for _ in range(8):
+    for _ in range(6):
         display.show(full_image)
         sleep(300)
         display.show(blank_image)
@@ -126,51 +129,19 @@ while True:
             showTimerLengthSetting()
         else:
             # toggle timer
-            if timer_length == 25:
+            if timer_length == 50:
                 timer_length = 5
                 display.scroll(timer_length)
                 showTimerLengthSetting()
-            else:
+            elif timer_length == 5:
                 timer_length = 25
                 display.scroll(timer_length)
                 showTimerLengthSetting()
-    if pin_logo.is_touched():
-        if running:
-            running = 0
-            updateTimerDisplay(15)
-            sleep(600)
-            showTimerLengthSetting()
-        else:
-            for i in range(len(timer_length_list)):
-                if timer_length == timer_length_list[i]:
-                    if i == len(timer_length_list) - 1:
-                        timer_length = timer_length_list[0]
-                        break
-                    else:
-                        timer_length = timer_length_list[i + 1]
-                        break
             else:
-                timer_length=25
-            display.scroll(timer_length)
-            showTimerLengthSetting()
-    
-    if pin0.is_touched():
-        if running:
-            stop_timer()
-        else:
-            timer_length = 5
-            start_timer()
-            
-    if pin1.is_touched():
-        if running:
-            stop_timer()
-        else:
-            timer_length = 15
-            start_timer()
-    
-    if pin2.is_touched():
-        if running:
-            stop_timer()
-        else:
-            timer_length = 25
-            start_timer()
+                timer_length = 50
+                display.scroll(timer_length)
+                showTimerLengthSetting()
+    if pin_logo.is_touched():
+        beep()
+        sleep(500)
+

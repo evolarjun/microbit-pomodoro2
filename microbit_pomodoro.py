@@ -1,7 +1,8 @@
 from microbit import (display, button_a, button_b, Image, running_time, 
-    set_volume, sleep, pin_logo)
+    set_volume, sleep, pin_logo, pin0, pin1, pin2)
 import micropython
 import audio
+from microbit import *
 
 # set some global variables
 ms_in_minute = 1000 # ms in a minute for debugging
@@ -38,6 +39,11 @@ digits = {
     '9': ('99', '99', '99', '09', '09'),
     ' ': ('00', '00', '00', '00', '00'),
 }
+pin0.set_touch_mode(pin0.CAPACITIVE)
+pin1.set_touch_mode(pin1.CAPACITIVE)
+pin2.set_touch_mode(pin2.CAPACITIVE)
+
+
 
 def showDigits(value, b=9, fill_zero=False):
     value = min(max(value, 0), 99)
@@ -76,8 +82,14 @@ def showTimerLengthSetting():
     global max_brightness
     global timer_length
     display.show(blank_image)
-    if timer_length > 25:
-        display.show(Image.CLOCK12)
+    if timer_length == 50:
+        display.show(Image(
+        "00000:"
+        "00000:"
+        "66666:"
+        "66666:"
+        "00000:"
+        ))
     else:
         for col in range(int(timer_length / 5)):
             display.set_pixel(col, 2, max_brightness)
@@ -147,7 +159,7 @@ while True:
     if button_a.was_pressed():
         if running:
             running = 0
-            updateTimerDisplay(25)
+            updateTimerDisplay(timer_length)
             sleep(500)
             showTimerLengthSetting()
         else:
@@ -167,8 +179,31 @@ while True:
                 showDigits(timer_length)
                 sleep(500)
                 showTimerLengthSetting()
-    if pin_logo.is_touched():
-        beep()
-        sleep(500)
-        showDigits(99)
-
+# Use of touch sensors causes flickering for some reason
+#    if pin_logo.is_touched():
+#        beep()
+#    if pin0.is_touched():
+#        beep()
+#        if running:
+#            running = 0
+#        timer_length = 5
+#        showDigits(timer_length)
+#        sleep(500)
+#        showTimerLengthSetting()
+#    if pin1.is_touched():
+#        beep()
+#        if running:
+#            running = 0
+#        timer_length = 25
+#        showDigits(timer_length)
+#        sleep(500)
+#        showTimerLengthSetting()
+#    if pin2.is_touched():
+#        beep()
+#        if running:
+#            running = 0
+#        timer_length = 50
+#        showDigits(timer_length)
+#        sleep(500)
+#        showTimerLengthSetting()
+#    

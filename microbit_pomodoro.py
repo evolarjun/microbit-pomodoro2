@@ -1,6 +1,8 @@
-from microbit import *
+from microbit import (display, button_a, button_b, Image, running_time, 
+    set_volume, sleep, pin_logo, pin0, pin1, pin2)
 import micropython
 import audio
+from microbit import *
 
 # set some global variables
 ms_in_minute = 1000 # ms in a minute for debugging
@@ -24,10 +26,32 @@ full_image = Image(
         "99999:"
         "99999:"
 )
-
+digits = {
+    '0': ('99', '99', '99', '99', '99'),
+    '1': ('09', '09', '09', '09', '09'),
+    '2': ('99', '09', '99', '90', '99'),
+    '3': ('99', '09', '99', '09', '99'),
+    '4': ('90', '90', '99', '09', '09'),
+    '5': ('99', '90', '99', '09', '99'),
+    '6': ('90', '90', '99', '99', '99'),
+    '7': ('99', '09', '09', '09', '09'),
+    '8': ('99', '99', '00', '99', '99'),
+    '9': ('99', '99', '99', '09', '09'),
+    ' ': ('00', '00', '00', '00', '00'),
+}
 pin0.set_touch_mode(pin0.CAPACITIVE)
 pin1.set_touch_mode(pin1.CAPACITIVE)
 pin2.set_touch_mode(pin2.CAPACITIVE)
+
+
+
+def showDigits(value, b=9, fill_zero=False):
+    value = min(max(value, 0), 99)
+    d = ('{:02d}' if fill_zero else '{:2d}').format(value)
+    display.show(Image(':'.join(
+        ['{}0{}'.format(digits[d[0]][i], digits[d[1]][i]).replace('9', str(b)) 
+         for i in range(5)])))
+    
 
 def updateTimerDisplay(t):
     global max_brightness
@@ -58,8 +82,14 @@ def showTimerLengthSetting():
     global max_brightness
     global timer_length
     display.show(blank_image)
-    if timer_length > 25:
-        display.show(Image.CLOCK12)
+    if timer_length == 50:
+        display.show(Image(
+        "00000:"
+        "00000:"
+        "66666:"
+        "66666:"
+        "00000:"
+        ))
     else:
         for col in range(int(timer_length / 5)):
             display.set_pixel(col, 2, max_brightness)
@@ -67,12 +97,12 @@ def showTimerLengthSetting():
 
 def beep():
     audio.play(audio.SoundEffect(
-        freq_start=2500,
-        freq_end=1000,
-        duration=300,
-        vol_start=20,
-        vol_end=255,
-        waveform=2,
+        freq_start=2200, 
+        freq_end=2500, 
+        duration=100, 
+        vol_start=220, 
+        vol_end=220,
+        waveform=3,
         fx=0,
         shape=18), wait=False)
 
@@ -102,7 +132,8 @@ def start_timer():
     global time_0
     running = 1
     time_0 = running_time()
-    display.scroll(timer_length)
+    showDigits(timer_length)
+    sleep(500)
 
 
 set_volume(50)
@@ -128,24 +159,51 @@ while True:
     if button_a.was_pressed():
         if running:
             running = 0
-            updateTimerDisplay(25)
+            updateTimerDisplay(timer_length)
             sleep(500)
             showTimerLengthSetting()
         else:
             # toggle timer
             if timer_length == 50:
                 timer_length = 5
-                display.scroll(timer_length)
+                showDigits(timer_length)
+                sleep(500)
                 showTimerLengthSetting()
             elif timer_length == 5:
                 timer_length = 25
-                display.scroll(timer_length)
+                showDigits(timer_length)
+                sleep(500)
                 showTimerLengthSetting()
             else:
                 timer_length = 50
-                display.scroll(timer_length)
+                showDigits(timer_length)
+                sleep(500)
                 showTimerLengthSetting()
-    if pin_logo.is_touched():
-        beep()
-        sleep(500)
-
+# Use of touch sensors causes flickering for some reason
+#    if pin_logo.is_touched():
+#        beep()
+#    if pin0.is_touched():
+#        beep()
+#        if running:
+#            running = 0
+#        timer_length = 5
+#        showDigits(timer_length)
+#        sleep(500)
+#        showTimerLengthSetting()
+#    if pin1.is_touched():
+#        beep()
+#        if running:
+#            running = 0
+#        timer_length = 25
+#        showDigits(timer_length)
+#        sleep(500)
+#        showTimerLengthSetting()
+#    if pin2.is_touched():
+#        beep()
+#        if running:
+#            running = 0
+#        timer_length = 50
+#        showDigits(timer_length)
+#        sleep(500)
+#        showTimerLengthSetting()
+#    

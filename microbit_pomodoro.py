@@ -170,6 +170,11 @@ while True:
                 sleep(500)
                 showTimerLengthSetting()
             elif timer_length == 5:
+                timer_length = 15
+                showDigits(timer_length)
+                sleep(500)
+                showTimerLengthSetting()
+            elif timer_length == 15:
                 timer_length = 25
                 showDigits(timer_length)
                 sleep(500)

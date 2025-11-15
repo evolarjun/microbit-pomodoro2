@@ -1,8 +1,9 @@
 from microbit import (display, button_a, button_b, Image, running_time, 
     set_volume, sleep, pin_logo, pin0, pin1, pin2)
 import micropython
-import audio
-from microbit import *
+#import audio
+#from microbit import *
+import music
 
 # set some global variables
 currently_shown_t = 0 # keep track of what is shown so we don't update the interface
@@ -40,9 +41,9 @@ digits = {
     '9': ('99', '99', '99', '09', '09'),
     ' ': ('00', '00', '00', '00', '00'),
 }
-pin0.set_touch_mode(pin0.CAPACITIVE)
-pin1.set_touch_mode(pin1.CAPACITIVE)
-pin2.set_touch_mode(pin2.CAPACITIVE)
+#pin0.set_touch_mode(pin0.CAPACITIVE)
+#pin1.set_touch_mode(pin1.CAPACITIVE)
+#pin2.set_touch_mode(pin2.CAPACITIVE)
 
 
 
@@ -100,15 +101,17 @@ def showTimerLengthSetting():
 
 
 def beep():
-    audio.play(audio.SoundEffect(
-        freq_start=2200, 
-        freq_end=2500, 
-        duration=100, 
-        vol_start=220, 
-        vol_end=220,
-        waveform=3,
-        fx=0,
-        shape=18), wait=False)
+    # music.play(music.BEEP)
+    music.pitch(1100, 100)
+    #audio.play(audio.SoundEffect(
+    #    freq_start=2200, 
+    #    freq_end=2500, 
+    #    duration=100, 
+    #    vol_start=220, 
+    #    vol_end=220,
+    #    waveform=3,
+    #    fx=0,
+    #    shape=18), wait=False)
 
 def alert():
     display.show(blank_image)
@@ -190,8 +193,10 @@ while True:
                 sleep(500)
                 showTimerLengthSetting()
 # Use of touch sensors causes flickering for some reason
-#    if pin_logo.is_touched():
-#        beep()
+    if pin_logo.is_touched():
+        beep()
+#        showDigits(1)
+#        timer_length = 
 #    if pin0.is_touched():
 #        beep()
 #        if running:

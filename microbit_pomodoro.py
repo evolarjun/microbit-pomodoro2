@@ -12,7 +12,7 @@ ms_in_minute = 60000
 time_0 = running_time()
 timer_length = 25 # in minutes
 timer_length_list = [5, 15, 25, 50]
-max_brightness = 6
+max_brightness = 6 # full brightness is too bright for my desk
 running = 0
 blank_image = Image(
         "00000:"
@@ -41,6 +41,8 @@ digits = {
     '9': ('99', '99', '99', '09', '09'),
     ' ': ('00', '00', '00', '00', '00'),
 }
+
+# setting these sometimes caused flickering in the 4th and 5th rows. Not sure why and it was intermittent.
 #pin0.set_touch_mode(pin0.CAPACITIVE)
 #pin1.set_touch_mode(pin1.CAPACITIVE)
 #pin2.set_touch_mode(pin2.CAPACITIVE)
@@ -192,7 +194,7 @@ while True:
                 showDigits(timer_length)
                 sleep(500)
                 showTimerLengthSetting()
-# Use of touch sensors causes flickering for some reason
+# Use of touch sensors for pins 1, 2, and 3 causes flickering for some reason
     if pin_logo.is_touched():
         beep()
 #        showDigits(1)

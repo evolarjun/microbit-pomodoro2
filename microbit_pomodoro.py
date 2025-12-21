@@ -7,9 +7,10 @@ import music
 
 # set some global variables
 currently_shown_t = 0 # keep track of what is shown so we don't update the interface
-ms_in_minute = 1000 # ms in a minute for debugging
+ms_in_minute = 5000 # ms in a minute for debugging
 ms_in_minute = 60000
 time_0 = running_time()
+stopwatch_mode = False
 timer_length = 25 # in minutes
 timer_length_list = [5, 15, 25, 50]
 max_brightness = 6 # full brightness is too bright for my desk
@@ -63,11 +64,8 @@ def updateTimerDisplay(t):
     t2 = int(t)
     first = max_brightness
     if t2 > 26:
-        t2 = t - 25
+        t2 = t % 25
         first = 0
-    #elif t2 == 25:
-    #    first = 3
-    #print()
     if (int(t2) != currently_shown_t): 
         currently_shown_t = int(t2)
         for row in range(5):
@@ -144,6 +142,11 @@ def start_timer():
     showDigits(timer_length)
     sleep(500)
 
+def stopwatch_updated():
+    # blink the bottom right on if even second, off if odd second
+    # illuminate the number of minutes
+    updateTimerDisplay(50)
+
 set_volume(50)
 display.show(Image.YES)
 sleep(200)
@@ -151,8 +154,15 @@ showTimerLengthSetting()
 
 while True:
     if running:
-        elapsed = (running_time() - time_0) / ms_in_minute        
-        if timer_length - elapsed <= 0:
+        elapsed = (running_time() - time_0) / ms_in_minute
+        if stopwatch_mode:
+            if (running_time() // 1000) % 2 == 1:
+                # flash on 1/2 second
+                updateTimerDisplay(25)
+            else:
+                updateTimerDisplay(elapsed)
+            
+        elif timer_length - elapsed <= 0:
             running = 0
             currently_shown_t = 0
             alert()
@@ -169,6 +179,7 @@ while True:
     if button_a.was_pressed():
         if running:
             running = 0
+            stopwatch_mode = 0
             updateTimerDisplay(timer_length)
             sleep(500)
             showTimerLengthSetting()
@@ -196,7 +207,12 @@ while True:
                 showTimerLengthSetting()
 # Use of touch sensors for pins 1, 2, and 3 causes flickering for some reason
     if pin_logo.is_touched():
+        # stopwatch mode
+        stopwatch_mode = True
+        running = 1
+        time_0 = running_time()
         beep()
+        display.show('SW')
 #        showDigits(1)
 #        timer_length = 
 #    if pin0.is_touched():

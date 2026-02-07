@@ -174,8 +174,10 @@ while True:
     if button_b.was_pressed():
         if running:
             stop_timer()
+            stopwatch_mode = 0
         else:
             start_timer()
+            stopwatch_mode = 0
     if button_a.was_pressed():
         if running:
             running = 0

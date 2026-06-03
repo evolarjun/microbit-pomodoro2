@@ -4,6 +4,7 @@ import micropython
 #import audio
 #from microbit import *
 import music
+import power
 
 # set some global variables
 currently_shown_t = 0 # keep track of what is shown so we don't update the interface
@@ -15,6 +16,8 @@ timer_length = 25 # in minutes
 timer_length_list = [5, 15, 25, 50]
 max_brightness = 6 # full brightness is too bright for my desk
 running = 0
+last_interaction_time = running_time() # used to put to sleep 
+sleep_time = 5 # sleep after sleep_time minutes since last interaction
 blank_image = Image(
         "00000:"
         "00000:"
@@ -153,6 +156,10 @@ sleep(200)
 showTimerLengthSetting()
 
 while True:
+    if (running_time() - last_interaction_time) / (1000 * 60) > sleep_time:
+        if stopwatch_mode or not running:
+            power.wake_on(button_b)
+            power.off()
     if running:
         elapsed = (running_time() - time_0) / ms_in_minute
         if stopwatch_mode:
@@ -172,6 +179,7 @@ while True:
             updateTimerDisplay(timer_length - elapsed)
 
     if button_b.was_pressed():
+        last_interaction_time = running_time()
         if running:
             stop_timer()
             stopwatch_mode = 0
@@ -179,6 +187,7 @@ while True:
             start_timer()
             stopwatch_mode = 0
     if button_a.was_pressed():
+        last_interaction_time = running_time()
         if running:
             running = 0
             stopwatch_mode = 0
@@ -213,6 +222,8 @@ while True:
         stopwatch_mode = True
         running = 1
         time_0 = running_time()
+        last_interaction_time = time_0
+
         beep()
         display.show('SW')
 #        showDigits(1)

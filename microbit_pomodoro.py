@@ -158,7 +158,6 @@ showTimerLengthSetting()
 while True:
     if (running_time() - last_interaction_time) / (1000 * 60) > sleep_time:
         if stopwatch_mode or not running:
-            power.wake_on(button_b)
             power.off()
     if running:
         elapsed = (running_time() - time_0) / ms_in_minute
@@ -177,7 +176,9 @@ while True:
         else:
             # print(timer_length - elapsed)
             updateTimerDisplay(timer_length - elapsed)
-
+            # update so we don't sleep immediately after timer finishes
+            last_interaction_time = running_time() 
+            
     if button_b.was_pressed():
         last_interaction_time = running_time()
         if running:

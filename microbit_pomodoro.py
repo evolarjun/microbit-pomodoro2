@@ -45,6 +45,7 @@ digits = {
     '9': ('99', '99', '99', '09', '09'),
     ' ': ('00', '00', '00', '00', '00'),
 }
+long_press_duration = 500 # the length of time for a long-press of the logo
 
 # setting these sometimes caused flickering in the 4th and 5th rows. Not sure why and it was intermittent.
 #pin0.set_touch_mode(pin0.CAPACITIVE)
@@ -219,14 +220,18 @@ while True:
                 showTimerLengthSetting()
 # Use of touch sensors for pins 1, 2, and 3 causes flickering for some reason
     if pin_logo.is_touched():
-        # stopwatch mode
-        stopwatch_mode = True
-        running = 1
-        time_0 = running_time()
-        last_interaction_time = time_0
+        # stopwatch mode after long press
+        long_press_start = running_time()
+        long_press_detected = False
+        while pin_logo.is_touched():
+            if running_time() - long_press_start >= long_press_duration:
+                stopwatch_mode = True
+                running = 1
+                time_0 = running_time()
+                last_interaction_time = time_0
 
-        beep()
-        display.show('SW')
+                beep()
+                display.show('SW')
 #        showDigits(1)
 #        timer_length = 
 #    if pin0.is_touched():
